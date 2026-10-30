@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Leuchtwald">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f2a2e">
+<title>Leuchtwald</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Layout: eine Nachtwald-Lichtung als Startseite, jedes Spiel als eigene Bühne mit großer Tippfläche, Verlauf als ruhige Elternseite */
+:root{
+  --night:#0f2a2e; --night-2:#173b40; --night-3:#21494e;
+  --glow:#ffd45c; --moss:#86cfa2; --coral:#ff8f70; --mist:#eaf3ec; --soft:#a8c6bc;
+  --display:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--night);color:var(--mist);font-family:var(--body);font-size:17px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:radial-gradient(60% 40% at 20% 0%,rgba(134,207,162,.12),transparent 70%),radial-gradient(50% 35% at 90% 100%,rgba(255,212,92,.08),transparent 70%)}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 40px}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.2rem,8vw,3.4rem);color:var(--glow);letter-spacing:.01em}
+h2{font-size:clamp(1.6rem,5.5vw,2.2rem)}
+p{margin:0}
+.lead{color:var(--soft);max-width:36ch;margin-top:6px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--night-2);border:1px solid var(--night-3);color:var(--mist);
+  border-radius:999px;padding:8px 14px;font:600 .95rem var(--body);cursor:pointer}
+.chip:focus-visible,.btn:focus-visible,.card:focus-visible,.cell:focus-visible,.ans:focus-visible,.shroom:focus-visible{outline:3px solid var(--glow);outline-offset:3px}
+.today{margin-top:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:var(--soft);font-size:.95rem}
+.jars{display:flex;gap:6px}
+.jar{width:22px;height:28px;border-radius:6px 6px 9px 9px;border:2px solid var(--night-3);background:var(--night-2)}
+.jar.on{background:var(--glow);border-color:var(--glow);box-shadow:0 0 12px rgba(255,212,92,.6)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+.card{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:center;
+  background:var(--night-2);border-radius:22px;padding:16px;min-height:112px;transition:transform .15s}
+.card.wide{grid-column:1/-1;background:linear-gradient(90deg,var(--night-2),var(--night-3))}
+.card:active{transform:scale(.97)}
+.card h3{font-size:1.3rem;color:var(--mist)}
+.card p{color:var(--soft);font-size:.92rem;margin-top:2px}
+.card .skill{display:inline-block;margin-top:6px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--moss)}
+.card .stars{color:var(--glow);font-size:.95rem;letter-spacing:2px;margin-top:4px;min-height:1.2em}
+.icon{width:72px;height:72px}
+.parents{margin-top:30px;border-top:1px solid var(--night-3);padding-top:20px}
+.parents summary{cursor:pointer;font-family:var(--display);font-size:1.15rem;color:var(--mist)}
+.parents ul{color:var(--soft);padding-left:20px;margin:12px 0 0;display:grid;gap:8px;max-width:62ch}
+.parents strong{color:var(--mist)}
+
+/* Spielbühne */
+.screen[hidden]{display:none!important}
+.game{min-height:100%;display:flex;flex-direction:column;gap:16px;padding-block:16px 28px;max-width:640px;margin:0 auto}
+.bar{display:flex;align-items:center;gap:12px}
+.progress{flex:1;height:10px;background:var(--night-2);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--moss);border-radius:99px;transition:width .3s}
+.stage{position:relative;flex:1;min-height:360px;background:var(--night-2);border-radius:28px;display:grid;place-items:center;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.hint{text-align:center;color:var(--soft);min-height:1.5em;font-weight:600}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;font:600 1.25rem var(--display);padding:16px 28px;border-radius:18px;background:var(--glow);color:var(--night);min-width:200px}
+.btn.ghost{background:transparent;color:var(--mist);border:2px solid var(--night-3)}
+.btn.small{font-size:1rem;padding:10px 18px;min-width:0}
+.btn.danger{background:var(--coral)}
+.btn:active{transform:scale(.97)}
+.intro{display:grid;gap:16px;justify-items:center;text-align:center;padding:24px;max-width:32ch}
+.intro .demo{display:flex;gap:22px;align-items:center;justify-content:center;flex-wrap:wrap}
+.intro .demo figure{margin:0;display:grid;gap:4px;justify-items:center;font-weight:800;font-size:.85rem}
+.ok{color:var(--moss)} .no{color:var(--coral)}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+/* Glühwürmchen */
+.sprite{width:min(48vw,190px);height:min(48vw,190px);transition:transform .12s}
+.sprite.pop{transform:scale(1.12)}
+.flash{position:absolute;inset:0;border-radius:28px;pointer-events:none;opacity:0;transition:opacity .25s}
+.flash.good{background:radial-gradient(circle,rgba(134,207,162,.35),transparent 65%);opacity:1}
+.flash.bad{background:radial-gradient(circle,rgba(255,143,112,.28),transparent 65%);opacity:1}
+
+/* Laternen */
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,3vw,18px);width:min(86vw,380px);padding:10px}
+.cell{all:unset;box-sizing:border-box;aspect-ratio:1;max-width:100%;border-radius:22px 22px 28px 28px;background:var(--night-3);cursor:pointer;
+  border:3px solid rgba(234,243,236,.12);transition:background .15s,box-shadow .15s;position:relative}
+.cell::before{content:"";position:absolute;left:22%;right:22%;top:-7px;height:10px;border-radius:5px;background:#4c6f6a}
+.cell.lit{background:var(--glow);box-shadow:0 0 34px rgba(255,212,92,.75);border-color:var(--glow)}
+.cell.tap{background:var(--moss)}
+.cell.wrong{background:var(--coral)}
+.board.locked .cell{cursor:default}
+
+/* Pilzsuche */
+.field{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;width:100%;padding:14px}
+@media (max-width:520px){.field{grid-template-columns:repeat(5,1fr)}}
+.shroom{all:unset;box-sizing:border-box;aspect-ratio:1;display:grid;place-items:center;cursor:pointer;border-radius:14px;transition:opacity .3s,transform .2s}
+.shroom svg{width:92%;height:92%}
+.shroom.found{opacity:.25;transform:scale(.85);pointer-events:none}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.target{display:flex;align-items:center;gap:10px;justify-content:center;color:var(--soft);font-weight:600;padding-top:10px}
+.target svg{width:44px;height:44px}
+
+/* Antwort-Spiele (Tag und Nacht, Igel) */
+.duel{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;padding:18px}
+.rule{font:600 1.15rem var(--display);padding:6px 16px;border-radius:99px;background:var(--night-3);color:var(--mist);text-align:center}
+.rule.flip{background:var(--glow);color:var(--night)}
+.stim{min-height:180px;display:grid;place-items:center;width:100%}
+.stim svg.big{width:min(44vw,170px);height:min(44vw,170px)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:min(100%,420px)}
+.ans{all:unset;box-sizing:border-box;cursor:pointer;background:var(--night-3);border-radius:20px;padding:12px;display:grid;justify-items:center;gap:4px;
+  font:600 1.1rem var(--display);color:var(--mist);border:3px solid transparent;transition:background .15s}
+.ans svg{width:64px;height:64px}
+.ans:active{transform:scale(.97)}
+.ans.good{background:rgba(134,207,162,.35);border-color:var(--moss)}
+.ans.bad{background:rgba(255,143,112,.3);border-color:var(--coral)}
+.parade{display:flex;gap:2px;justify-content:center;align-items:flex-end;width:100%}
+.parade svg{width:min(17vw,88px);height:auto}
+.parade .mid{position:relative}
+.parade .mid::after{content:"";position:absolute;left:8%;right:8%;bottom:-8px;height:10px;border-radius:50%;background:var(--moss);opacity:.8}
+
+/* Sternschnuppen */
+.sky{background:radial-gradient(120% 90% at 50% 0%,#1d4650,#0b2125)}
+.dot{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--mist);opacity:.5;animation:twinkle 3s infinite alternate}
+@keyframes twinkle{to{opacity:.12}}
+.shoot{position:absolute;left:0;top:0;width:130px;height:4px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(255,240,190,.9));pointer-events:none}
+.shoot::after{content:"";position:absolute;right:-6px;top:-5px;width:14px;height:14px;border-radius:50%;background:#fff6d6;box-shadow:0 0 18px 6px rgba(255,212,92,.7)}
+.counter{position:absolute;top:14px;left:0;right:0;text-align:center;font:600 1.1rem var(--display);color:var(--soft);pointer-events:none}
+
+/* Atmen */
+.breath{width:min(60vw,240px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,var(--glow) 0 18%,rgba(255,212,92,.35) 40%,rgba(255,212,92,.05) 70%);
+  transform:scale(.45);transition-property:transform;transition-timing-function:ease-in-out}
+.breath-word{position:absolute;bottom:26px;left:0;right:0;text-align:center;font:600 1.6rem var(--display);color:var(--mist)}
+
+/* Ergebnis */
+.result{display:grid;gap:18px;justify-items:center;text-align:center;padding:30px 10px}
+.bigstars{font-size:3.4rem;letter-spacing:8px;color:var(--glow);text-shadow:0 0 18px rgba(255,212,92,.5)}
+.bigstars .dim{color:var(--night-3);text-shadow:none}
+.stats{color:var(--soft);font-variant-numeric:tabular-nums;max-width:34ch}
+
+/* Verlauf */
+.hist h2{margin-top:6px}
+.section{margin-top:26px}
+.section h3{font-size:1.15rem;color:var(--mist);margin-bottom:10px}
+.days{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:4px}
+.day{display:grid;gap:4px;justify-items:center;font-size:.7rem;color:var(--soft);font-variant-numeric:tabular-nums}
+.day i{display:block;width:100%;max-width:30px;aspect-ratio:1/1.3;border-radius:6px;background:var(--night-2)}
+.day i.l1{background:rgba(255,212,92,.35)} .day i.l2{background:rgba(255,212,92,.65)} .day i.l3{background:var(--glow)}
+.mcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:520px){.mcards{grid-template-columns:1fr}}
+.mcard{background:var(--night-2);border-radius:18px;padding:14px 16px;display:grid;gap:4px;min-width:0}
+.mcard .name{font:600 1.05rem var(--display)}
+.mcard .val{font:600 1.6rem var(--display);color:var(--glow);font-variant-numeric:tabular-nums}
+.mcard .val small{font:600 .85rem var(--body);color:var(--soft);margin-left:4px}
+.mcard .meta{font-size:.82rem;color:var(--soft)}
+.mcard svg{width:100%;height:56px;display:block}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
+th{text-align:left;color:var(--soft);font-weight:800;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;padding:8px 10px 8px 0;border-bottom:1px solid var(--night-3)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--night-2);vertical-align:top}
+td.st{color:var(--glow);white-space:nowrap}
+td.when{white-space:nowrap;color:var(--soft)}
+.empty{color:var(--soft);background:var(--night-2);border-radius:18px;padding:18px}
+.note{color:var(--soft);font-size:.9rem;max-width:62ch;margin-top:10px}
+textarea.copy{width:100%;min-height:140px;margin-top:10px;background:var(--night-2);color:var(--mist);border:1px solid var(--night-3);border-radius:12px;padding:10px;font:14px/1.4 ui-monospace,monospace;box-sizing:border-box}
+
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation:none!important}}
+</style>
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<noscript><div style="margin:40px auto;max-width:30ch;font-family:system-ui;color:#eaf3ec;background:#173b40;padding:20px;border-radius:16px">
+Diese Ansicht führt keine Skripte aus. Bitte die Datei in Safari öffnen, nicht in der Dateien-Vorschau.</div></noscript>
+
+
+<!-- STARTSEITE -->
+<section class="screen wrap" id="home">
+  <div class="top">
+    <div>
+      <h1>Leuchtwald</h1>
+      <p class="lead">Kurze Spiele für ruhige Augen und wache Ohren. Ein Spiel dauert etwa zwei Minuten.</p>
+    </div>
+    <div class="chips">
+      <button class="chip" id="histBtn" type="button">Verlauf</button>
+      <button class="chip" id="soundBtn" type="button" aria-pressed="true">Ton an</button>
+    </div>
+  </div>
+
+  <div class="today">
+    <span>Heute gesammelt:</span>
+    <div class="jars" id="jars" aria-hidden="true"></div>
+    <span id="todayText"></span>
+  </div>
+
+  <div class="grid" id="cards"></div>
+
+  <details class="parents">
+    <summary>Für Eltern</summary>
+    <ul>
+      <li><strong>Kurz halten:</strong> zwei bis drei Spiele am Tag reichen. Danach ist Schluss, auch wenn es gut läuft.</li>
+      <li><strong>Lieber wiederholen als wechseln:</strong> zwei bis drei feste Lieblingsspiele über Wochen bringen mehr als jeden Tag etwas Neues.</li>
+      <li><strong>Dabeibleiben:</strong> gemeinsam spielen und loben, was das Kind gut gesteuert hat („Du hast gewartet!“), nicht nur die Sterne.</li>
+      <li><strong>Übertragen:</strong> die Bilder aus den Spielen im Alltag nutzen, etwa „Wie bei der Eule: erst warten“.</li>
+      <li><strong>Erwartung:</strong> die Spiele üben Fähigkeiten im Spiel. Sie ersetzen keine Diagnostik, Therapie oder ärztlich verordnete Behandlung.</li>
+      <li><strong>Daten:</strong> Sterne und Verlauf werden nur auf diesem Gerät im Browser gespeichert.</li>
+    </ul>
+  </details>
+</section>
+
+<!-- VERLAUF -->
+<section class="screen wrap hist" id="history" hidden>
+  <div class="top">
+    <button class="chip" id="histBack" type="button">Zurück</button>
+  </div>
+  <h2>Verlauf</h2>
+  <p class="note">Werte schwanken von Tag zu Tag, etwa mit Müdigkeit, Tageszeit oder Hunger. Aussagekräftig ist erst die Richtung über mehrere Wochen.</p>
+  <div id="histBody"></div>
+</section>
+
+<!-- SPIELBÜHNE -->
+<section class="screen" id="play" hidden>
+  <div class="game">
+    <div class="bar">
+      <button class="chip" id="backBtn" type="button">Zurück</button>
+      <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+      <button class="chip" id="readBtn" type="button">Vorlesen</button>
+    </div>
+    <div class="stage" id="stage"></div>
+    <p class="hint" id="hint" aria-live="polite"></p>
+  </div>
+</section>
+
+<script>
+(function(){
+"use strict";
+/* ---------- Grafiken ---------- */
+const FIREFLY = `<svg viewBox="0 0 200 200" class="sprite"><circle cx="100" cy="112" r="70" fill="rgba(255,212,92,.18)"/><circle cx="100" cy="112" r="44" fill="rgba(255,212,92,.35)"/>
+<ellipse cx="66" cy="78" rx="30" ry="18" fill="rgba(234,243,236,.55)" transform="rotate(-30 66 78)"/><ellipse cx="134" cy="78" rx="30" ry="18" fill="rgba(234,243,236,.55)" transform="rotate(30 134 78)"/>
+<ellipse cx="100" cy="122" rx="26" ry="32" fill="#ffd45c"/><circle cx="100" cy="76" r="20" fill="#2b4a3f"/><circle cx="93" cy="73" r="5" fill="#eaf3ec"/><circle cx="107" cy="73" r="5" fill="#eaf3ec"/>
+<circle cx="94" cy="74" r="2.4" fill="#0f2a2e"/><circle cx="108" cy="74" r="2.4" fill="#0f2a2e"/><path d="M92 58 L84 42 M108 58 L116 42" stroke="#2b4a3f" stroke-width="4" stroke-linecap="round"/></svg>`;
+const OWL = (awake)=>`<svg viewBox="0 0 200 200" class="sprite"><path d="M48 70 Q50 30 70 46 Q100 30 130 46 Q150 30 152 70 L156 150 Q100 186 44 150 Z" fill="#8a6f55"/>
+<ellipse cx="100" cy="140" rx="36" ry="30" fill="#c9ad8a"/>
+${awake?`<circle cx="76" cy="88" r="20" fill="#eaf3ec"/><circle cx="124" cy="88" r="20" fill="#eaf3ec"/><circle cx="76" cy="90" r="9" fill="#0f2a2e"/><circle cx="124" cy="90" r="9" fill="#0f2a2e"/>`
+:`<path d="M58 90 Q76 102 94 90" stroke="#3b2b1f" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M106 90 Q124 102 142 90" stroke="#3b2b1f" stroke-width="6" fill="none" stroke-linecap="round"/>`}
+<path d="M92 104 L100 118 L108 104 Z" fill="#ffb54a"/>${awake?"":`<text x="150" y="48" font-family="Fredoka,sans-serif" font-size="26" fill="#a8c6bc">z</text><text x="166" y="30" font-family="Fredoka,sans-serif" font-size="18" fill="#a8c6bc">z</text>`}</svg>`;
+function mushroom(cap,dots){
+  const d = dots ? `<circle cx="40" cy="38" r="6" fill="#fff8ea"/><circle cx="62" cy="28" r="5" fill="#fff8ea"/><circle cx="78" cy="42" r="6" fill="#fff8ea"/><circle cx="55" cy="48" r="4" fill="#fff8ea"/>` : "";
+  return `<svg viewBox="0 0 120 120" aria-hidden="true"><rect x="46" y="54" width="28" height="48" rx="12" fill="#efe3c8"/><path d="M14 62 Q14 14 60 14 Q106 14 106 62 Z" fill="${cap}"/>${d}</svg>`;
+}
+const RED="#e2553f", BROWN="#9a6a3d";
+const SUN = (cls="")=>`<svg viewBox="0 0 100 100" class="${cls}" aria-hidden="true"><g stroke="#ffd45c" stroke-width="7" stroke-linecap="round">${[0,45,90,135,180,225,270,315].map(a=>`<line x1="50" y1="8" x2="50" y2="18" transform="rotate(${a} 50 50)"/>`).join("")}</g><circle cx="50" cy="50" r="24" fill="#ffd45c"/></svg>`;
+const MOON = (cls="")=>`<svg viewBox="0 0 100 100" class="${cls}" aria-hidden="true"><path d="M62 14 A36 36 0 1 0 86 66 A28 28 0 1 1 62 14 Z" fill="#cfe0f0"/><circle cx="36" cy="58" r="4" fill="#a9bfd4"/><circle cx="48" cy="72" r="3" fill="#a9bfd4"/></svg>`;
+function hedgehog(right){
+  const g=`<path d="M8 52 L12 32 L18 44 L22 22 L30 40 L34 16 L42 36 L48 14 L54 34 L60 18 L64 38 L70 26 L72 46 Z" fill="#5a3f2a"/>
+<ellipse cx="42" cy="50" rx="34" ry="17" fill="#7a5a3e"/><ellipse cx="76" cy="52" rx="15" ry="11" fill="#dcbb92"/>
+<circle cx="91" cy="52" r="4" fill="#2b1d14"/><circle cx="79" cy="47" r="2.6" fill="#2b1d14"/>
+<rect x="28" y="62" width="7" height="8" rx="3" fill="#5a3f2a"/><rect x="56" y="62" width="7" height="8" rx="3" fill="#5a3f2a"/>`;
+  return `<svg viewBox="0 0 100 74" aria-hidden="true"><g ${right?"":'transform="translate(100 0) scale(-1 1)"'}>${g}</g></svg>`;
+}
+const ARROW = (right)=>`<svg viewBox="0 0 100 100" aria-hidden="true"><path d="${right?"M22 50 H72 M54 30 L76 50 L54 70":"M78 50 H28 M46 30 L24 50 L46 70"}" stroke="#eaf3ec" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+/* ---------- Spielliste ---------- */
+const META={
+  ampel:{name:"Glühwürmchen fangen",skill:"Bremsen üben",desc:"Tippe beim Glühwürmchen. Die Eule schläft, lass sie in Ruhe.",
+    icon:'<ellipse cx="50" cy="58" rx="20" ry="20" fill="rgba(255,212,92,.35)"/><ellipse cx="50" cy="58" rx="12" ry="15" fill="#ffd45c"/><circle cx="50" cy="38" r="9" fill="#2b4a3f"/>',
+    metric:"acc",label:"richtig",unit:"%",better:1},
+  tagnacht:{name:"Tag und Nacht",skill:"Umdenken üben",desc:"Erst tippst du, was du siehst. Dann kommt der Gegenteil-Tag.",
+    icon:'<g transform="translate(10 18) scale(.45)">'+SUN().replace(/<\/?svg[^>]*>/g,"")+'</g><g transform="translate(46 34) scale(.42)">'+MOON().replace(/<\/?svg[^>]*>/g,"")+'</g>',
+    metric:"acc",label:"richtig",unit:"%",better:1},
+  kette:{name:"Laternen-Kette",skill:"Merken üben",desc:"Merk dir, welche Gläser leuchten, und tippe sie nach.",
+    icon:'<rect x="22" y="30" width="22" height="26" rx="6" fill="#ffd45c"/><rect x="56" y="30" width="22" height="26" rx="6" fill="#4c6f6a"/><rect x="39" y="60" width="22" height="22" rx="6" fill="#4c6f6a"/>',
+    metric:"span",label:"Laternen",unit:"",better:1},
+  igel:{name:"Igel-Parade",skill:"Ablenkung ausblenden",desc:"Wohin läuft der Igel in der Mitte? Die anderen wollen dich täuschen.",
+    icon:'<g transform="translate(14 28) scale(.72)">'+hedgehog(true).replace(/<\/?svg[^>]*>/g,"")+'</g>',
+    metric:"acc",label:"richtig",unit:"%",better:1},
+  pilze:{name:"Pilzsuche",skill:"Genau hinschauen",desc:"Finde nur die roten Pilze mit weißen Punkten.",
+    icon:'<g transform="translate(18 16) scale(.64)">'+mushroom(RED,true).replace(/<\/?svg[^>]*>/g,"")+'</g>',
+    metric:"sec",label:"Sekunden",unit:"",better:-1},
+  sterne:{name:"Sternschnuppen-Wache",skill:"Dranbleiben",desc:"Halte Wache am Nachthimmel und tippe jede Sternschnuppe.",
+    icon:'<circle cx="30" cy="30" r="2" fill="#eaf3ec"/><circle cx="72" cy="26" r="2" fill="#eaf3ec"/><circle cx="66" cy="74" r="2" fill="#eaf3ec"/><path d="M22 70 L58 46" stroke="rgba(255,240,190,.8)" stroke-width="4" stroke-linecap="round"/><circle cx="62" cy="43" r="7" fill="#fff6d6"/>',
+    metric:"hit",label:"gesehen",unit:"%",better:1},
+  atmen:{name:"Leuchtatem",skill:"Ruhig werden",desc:"Atme mit dem Licht ein und aus. Eine Minute, gut vor den Hausaufgaben.",wide:true,
+    icon:'<circle cx="50" cy="50" r="30" fill="rgba(255,212,92,.25)"/><circle cx="50" cy="50" r="14" fill="#ffd45c"/>',
+    metric:null}
+};
+const ORDER=["ampel","tagnacht","kette","igel","pilze","sterne","atmen"];
+document.getElementById("cards").innerHTML = ORDER.map(k=>{const m=META[k];return `<button class="card${m.wide?" wide":""}" data-game="${k}" type="button">
+  <svg class="icon" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#21494e"/>${m.icon}</svg>
+  <div><h3>${m.name}</h3><p>${m.desc}</p><span class="skill">${m.skill}</span><div class="stars" data-stars="${k}"></div></div></button>`}).join("");
+
+/* ---------- Speicher ---------- */
+const KEY="leuchtwald-v1";
+let store={stars:{},days:{},sound:true,history:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s) store=Object.assign(store,s);}catch(e){}
+if(!Array.isArray(store.history)) store.history=[];
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}}
+const pad=n=>String(n).padStart(2,"0");
+const dayKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayKey=()=>dayKey(new Date());
+const playsOn=k=>store.history.filter(h=>dayKey(new Date(h.t))===k).length;
+const median=a=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return Math.round(s.length%2?s[m]:(s[m-1]+s[m])/2)};
+
+/* ---------- Ton & Sprache ---------- */
+let ac=null;
+function tone(f,dur=.15,type="sine",vol=.12){
+  if(!store.sound) return;
+  try{ ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(), g=ac.createGain(); o.type=type; o.frequency.value=f;
+    g.gain.setValueAtTime(vol,ac.currentTime); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);
+    o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+dur);
+  }catch(e){}
+}
+const chime=()=>{tone(660,.12);setTimeout(()=>tone(990,.18),90)};
+const soft=()=>tone(220,.18,"triangle",.08);
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.95;speechSynthesis.speak(u);}catch(e){}}
+function hush(){try{speechSynthesis.cancel()}catch(e){}}
+
+/* ---------- Navigation ---------- */
+const $=id=>document.getElementById(id);
+const home=$("home"), play=$("play"), hist=$("history"), stage=$("stage"), hint=$("hint"), prog=$("prog");
+let timers=[], introText="";
+function later(fn,ms){const t=setTimeout(fn,ms);timers.push(t);return t}
+function clearTimers(){timers.forEach(clearTimeout);timers=[]}
+function setProg(p){prog.style.width=Math.round(Math.min(1,p)*100)+"%"}
+function show(el){[home,play,hist].forEach(s=>s.hidden=s!==el);window.scrollTo(0,0)}
+function goHome(){clearTimers();hush();stage.onpointerdown=null;stage.className="stage";show(home);renderHome()}
+$("backBtn").onclick=goHome;
+$("histBack").onclick=goHome;
+$("histBtn").onclick=()=>{renderHistory();show(hist)};
+$("readBtn").onclick=()=>speak(introText||hint.textContent);
+$("soundBtn").onclick=()=>{store.sound=!store.sound;save();renderSound()};
+function renderSound(){const b=$("soundBtn");b.textContent=store.sound?"Ton an":"Ton aus";b.setAttribute("aria-pressed",store.sound)}
+const starStr=n=>"★".repeat(n)+"☆".repeat(3-n);
+function renderHome(){
+  document.querySelectorAll("[data-stars]").forEach(el=>{const n=store.stars[el.dataset.stars];el.textContent=n?starStr(n):""});
+  const n=playsOn(todayKey()); const jars=$("jars"); jars.innerHTML="";
+  for(let i=0;i<3;i++){const j=document.createElement("span");j.className="jar"+(i<n?" on":"");jars.appendChild(j)}
+  $("todayText").textContent = n===0?"noch kein Licht":n>=3?`${n} Spiele – genug für heute, super!`:`${n} ${n===1?"Spiel":"Spiele"}`;
+}
+document.querySelectorAll(".card").forEach(c=>c.onclick=()=>start(c.dataset.game));
+
+function start(game){
+  tone(1,.01);
+  clearTimers(); stage.onpointerdown=null; stage.className="stage";
+  show(play); setProg(0); hint.textContent="";
+  GAMES[game]();
+}
+function intro(title,text,demo,go){
+  introText=title+". "+text;
+  stage.innerHTML=`<div class="intro"><h2>${title}</h2>${demo||""}<p>${text}</p><button class="btn" id="goBtn" type="button">Los geht's</button></div>`;
+  $("goBtn").onclick=()=>{hush();stage.innerHTML="";go()};
+}
+function finish(game,stars,lines,msg,metrics){
+  clearTimers(); setProg(1); stage.onpointerdown=null; stage.className="stage";
+  store.stars[game]=Math.max(store.stars[game]||0,stars);
+  store.history.push({t:Date.now(),g:game,s:stars,m:metrics||{},info:lines});
+  if(store.history.length>800) store.history=store.history.slice(-800);
+  save();
+  stage.innerHTML=`<div class="result"><div class="bigstars" aria-label="${stars} von 3 Sternen">${"★".repeat(stars)}<span class="dim">${"★".repeat(3-stars)}</span></div>
+    <h2>${msg}</h2><p class="stats">${lines}</p><div class="row"><button class="btn" id="again" type="button">Nochmal</button><button class="btn ghost" id="toHome" type="button">Zur Lichtung</button></div></div>`;
+  hint.textContent=""; introText=msg;
+  if(stars===3) chime();
+  $("again").onclick=()=>start(game); $("toHome").onclick=goHome;
+}
+const praise=s=>s===3?"Das war richtig stark!":s===2?"Gut gemacht!":"Du bist drangeblieben!";
+function shuffle(a){for(let k=a.length-1;k>0;k--){const r=Math.floor(Math.random()*(k+1));[a[k],a[r]]=[a[r],a[k]]}return a}
+
+/* ---------- 1: Glühwürmchen fangen (Go/No-Go) ---------- */
+function ampel(){
+  const TRIALS=24, GO=17; let i=0, showMs=1100, hits=0, cr=0, cur=null, tapped=false, t0=0, rts=[];
+  const seq=shuffle(Array.from({length:TRIALS},(_,k)=>k<GO?"go":"no"));
+  stage.innerHTML=`<div id="spr"></div><div class="flash" id="fl"></div>`;
+  const spr=$("spr"), fl=$("fl");
+  const flash=c=>{fl.className="flash "+c;later(()=>fl.className="flash",260)};
+  stage.onpointerdown=()=>{
+    if(!cur||tapped) return; tapped=true;
+    if(cur==="go"){hits++;rts.push(performance.now()-t0);tone(880,.1);flash("good");spr.querySelector("svg")?.classList.add("pop");showMs=Math.max(560,showMs-35);hint.textContent="Gefangen!"}
+    else{soft();spr.innerHTML=OWL(true);flash("bad");hint.textContent="Huch, die Eule ist aufgewacht."}
+  };
+  function next(){
+    setProg(i/TRIALS);
+    if(i>=TRIALS){const acc=Math.round((hits+cr)/TRIALS*100);const s=acc>=90?3:acc>=75?2:1;
+      return finish("ampel",s,`${hits} von ${GO} Glühwürmchen gefangen · ${cr} von ${TRIALS-GO} Eulen schlafen lassen`,praise(s),
+        {acc,hits,go:GO,cr,no:TRIALS-GO,rt:median(rts)})}
+    cur=null; spr.innerHTML="";
+    later(()=>{
+      cur=seq[i]; tapped=false; hint.textContent=""; t0=performance.now();
+      spr.innerHTML = cur==="go"?FIREFLY:OWL(false);
+      later(()=>{
+        if(!tapped){ if(cur==="go"){showMs=Math.min(1400,showMs+70);hint.textContent="Weggeflogen – das nächste kommt!"} else {cr++;hint.textContent="Pssst, gut gewartet."} }
+        cur=null; i++; later(next,350);
+      }, cur==="go"?showMs:1200);
+    }, 650+Math.random()*700);
+  }
+  next();
+}
+
+/* ---------- 2: Tag und Nacht (Regelwechsel) ---------- */
+function tagnacht(){
+  const WARM=6, MAIN=16, TOTAL=WARM+MAIN; let i=0, ok=0, rts=[], awaiting=false, stim=null, t0=0, to=null;
+  stage.innerHTML=`<div class="duel"><div class="rule" id="rule">Tippe, was du siehst</div><div class="stim" id="stim"></div>
+    <div class="answers"><button class="ans" id="aSun" type="button">${SUN()}Sonne</button><button class="ans" id="aMoon" type="button">${MOON()}Mond</button></div></div>`;
+  const rule=$("rule"), st=$("stim"), btn={sun:$("aSun"),moon:$("aMoon")};
+  const flip=()=>i>=WARM;
+  function mark(b,c){b.classList.add(c);later(()=>b.classList.remove(c),300)}
+  function answer(x){
+    if(!awaiting) return; awaiting=false; clearTimeout(to);
+    const want = flip() ? (stim==="sun"?"moon":"sun") : stim;
+    if(x===want){ if(flip()){ok++;rts.push(performance.now()-t0)} tone(820,.1); mark(btn[x],"good"); hint.textContent="Richtig!"; }
+    else{ soft(); mark(btn[x],"bad"); hint.textContent=flip()?"Gegenteil-Tag! Das andere Bild.":"Tippe, was du siehst."; }
+    st.innerHTML=""; i++; later(next,550);
+  }
+  btn.sun.onclick=()=>answer("sun"); btn.moon.onclick=()=>answer("moon");
+  function trial(){
+    stim=Math.random()<.5?"sun":"moon"; st.innerHTML=stim==="sun"?SUN("big"):MOON("big");
+    t0=performance.now(); awaiting=true; hint.textContent="";
+    to=later(()=>{if(awaiting){awaiting=false;st.innerHTML="";hint.textContent="Das ging zu schnell weg. Weiter!";i++;later(next,500)}},3000);
+  }
+  function next(){
+    setProg(i/TOTAL);
+    if(i>=TOTAL){const acc=Math.round(ok/MAIN*100);const s=acc>=90?3:acc>=70?2:1;
+      return finish("tagnacht",s,`Gegenteil-Tag: ${ok} von ${MAIN} richtig`,praise(s),{acc,ok,n:MAIN,rt:median(rts)})}
+    if(i===WARM){
+      rule.textContent="Gegenteil-Tag: tippe das Andere!"; rule.classList.add("flip"); st.innerHTML=""; hint.textContent="Jetzt wird es knifflig!";
+      tone(523,.15);later(()=>tone(392,.2),150); speak("Jetzt ist Gegenteil-Tag! Bei der Sonne tippst du den Mond, beim Mond die Sonne.");
+      return later(trial,3200);
+    }
+    later(trial,350);
+  }
+  next();
+}
+
+/* ---------- 3: Laternen-Kette (Abfolge merken) ---------- */
+function kette(){
+  const ROUNDS=8; let r=0, len=2, best=0, seq=[], pos=0;
+  stage.innerHTML=`<div class="board locked" id="board">${Array.from({length:9},(_,k)=>`<button class="cell" data-i="${k}" type="button" aria-label="Glas ${k+1}"></button>`).join("")}</div>`;
+  const board=$("board"), cells=[...board.children];
+  const notes=[523,587,659,698,784,880,988,1047,1175];
+  function light(k,cls,ms){cells[k].classList.add(cls);later(()=>cells[k].classList.remove(cls),ms)}
+  function round(){
+    setProg(r/ROUNDS);
+    if(r>=ROUNDS){const s=best>=5?3:best>=4?2:1;return finish("kette",s,`Längste Kette: ${best} Laternen`,praise(s),{span:best})}
+    seq=[];while(seq.length<len){const k=Math.floor(Math.random()*9);if(seq[seq.length-1]!==k)seq.push(k)}
+    pos=0; board.classList.add("locked"); hint.textContent=`Schau genau: ${len} Laternen`;
+    seq.forEach((k,n)=>later(()=>{light(k,"lit",480);tone(notes[k],.25)},900+n*750));
+    later(()=>{board.classList.remove("locked");hint.textContent="Jetzt du!"},900+seq.length*750);
+  }
+  cells.forEach(c=>c.onclick=()=>{
+    if(board.classList.contains("locked")) return;
+    const k=+c.dataset.i;
+    if(k===seq[pos]){light(k,"tap",220);tone(notes[k],.15);pos++;
+      if(pos===seq.length){board.classList.add("locked");best=Math.max(best,len);hint.textContent="Richtig!";chime();len=Math.min(9,len+1);r++;later(round,900)}
+    }else{board.classList.add("locked");light(k,"wrong",500);soft();later(()=>light(seq[pos],"lit",600),300);
+      hint.textContent="Fast! Hier wäre es gewesen.";len=Math.max(2,len-1);r++;later(round,1500)}
+  });
+  round();
+}
+
+/* ---------- 4: Igel-Parade (Flanker) ---------- */
+function igel(){
+  const TRIALS=20; let i=0, ok=0, rts=[], awaiting=false, dir=null, t0=0, to=null;
+  const conds=shuffle(Array.from({length:TRIALS},(_,k)=>k%2===0));
+  stage.innerHTML=`<div class="duel"><div class="rule">Wohin läuft der mittlere Igel?</div><div class="stim" id="stim"></div>
+    <div class="answers"><button class="ans" id="aL" type="button">${ARROW(false)}Links</button><button class="ans" id="aR" type="button">${ARROW(true)}Rechts</button></div></div>`;
+  const st=$("stim"), btn={l:$("aL"),r:$("aR")};
+  function mark(b,c){b.classList.add(c);later(()=>b.classList.remove(c),300)}
+  function answer(x){
+    if(!awaiting) return; awaiting=false; clearTimeout(to);
+    if(x===dir){ok++;rts.push(performance.now()-t0);tone(820,.1);mark(btn[x],"good");hint.textContent="Richtig!"}
+    else{soft();mark(btn[x],"bad");hint.textContent="Nur der Igel auf dem Blatt zählt."}
+    st.innerHTML=""; i++; later(next,550);
+  }
+  btn.l.onclick=()=>answer("l"); btn.r.onclick=()=>answer("r");
+  function next(){
+    setProg(i/TRIALS);
+    if(i>=TRIALS){const acc=Math.round(ok/TRIALS*100);const s=acc>=90?3:acc>=70?2:1;
+      return finish("igel",s,`${ok} von ${TRIALS} Igeln richtig erkannt`,praise(s),{acc,ok,n:TRIALS,rt:median(rts)})}
+    later(()=>{
+      dir=Math.random()<.5?"l":"r"; const same=conds[i]; const side=same?dir:(dir==="l"?"r":"l");
+      st.innerHTML=`<div class="parade">${[0,1,2,3,4].map(k=>k===2?`<span class="mid">${hedgehog(dir==="r")}</span>`:hedgehog(side==="r")).join("")}</div>`;
+      t0=performance.now(); awaiting=true; hint.textContent="";
+      to=later(()=>{if(awaiting){awaiting=false;st.innerHTML="";hint.textContent="Weiter geht's!";i++;later(next,500)}},3000);
+    },450);
+  }
+  next();
+}
+
+/* ---------- 5: Pilzsuche (visuelle Suche) ---------- */
+function pilze(){
+  const ROUNDS=3, TARGETS=5; let r=0, errors=0, t0=performance.now();
+  function round(){
+    setProg(r/ROUNDS);
+    if(r>=ROUNDS){const sec=Math.round((performance.now()-t0)/1000);const s=errors<=1?3:errors<=4?2:1;
+      return finish("pilze",s,`${ROUNDS*TARGETS} Pilze gefunden in ${sec} Sekunden · ${errors} ${errors===1?"Verwechslung":"Verwechslungen"}`,praise(s),{sec,err:errors})}
+    const n = window.innerWidth<=520?30:36;
+    const items=shuffle(Array.from({length:n},(_,k)=>k<TARGETS?"t":(k%2?"plain":"brown")));
+    let found=0;
+    stage.innerHTML=`<div style="width:100%"><div class="target">Suche: ${mushroom(RED,true)} <span id="left">${TARGETS} übrig</span></div>
+      <div class="field">${items.map(t=>`<button class="shroom" type="button" data-t="${t}" aria-label="Pilz">${t==="t"?mushroom(RED,true):t==="plain"?mushroom(RED,false):mushroom(BROWN,true)}</button>`).join("")}</div></div>`;
+    hint.textContent=`Runde ${r+1} von ${ROUNDS}`;
+    stage.querySelectorAll(".shroom").forEach(b=>b.onclick=()=>{
+      if(b.dataset.t==="t"){b.classList.add("found");found++;tone(700+found*80,.12);$("left").textContent=`${TARGETS-found} übrig`;
+        if(found===TARGETS){chime();r++;later(round,700)}}
+      else{errors++;soft();b.classList.remove("shake");void b.offsetWidth;b.classList.add("shake");
+        hint.textContent=b.dataset.t==="plain"?"Der hat keine Punkte.":"Der ist braun, nicht rot."}
+    });
+  }
+  round();
+}
+
+/* ---------- 6: Sternschnuppen-Wache (Daueraufmerksamkeit) ---------- */
+function sterne(){
+  const EVENTS=10, FLY=1800; let hits=0, fa=0, rts=[], active=null, t0=0, done=0;
+  stage.className="stage sky";
+  stage.innerHTML=`<div class="counter" id="cnt">Gesehen: 0</div>`;
+  for(let k=0;k<40;k++){const d=document.createElement("span");d.className="dot";d.style.left=Math.random()*100+"%";d.style.top=Math.random()*100+"%";d.style.animationDelay=(Math.random()*3)+"s";stage.appendChild(d)}
+  const cnt=$("cnt");
+  hint.textContent="Halte Wache …";
+  const gaps=Array.from({length:EVENTS},()=>3500+Math.random()*5500);
+  const total=gaps.reduce((a,b)=>a+b,0)+FLY; const start=performance.now();
+  const ticker=setInterval(()=>{ if(!stage.classList.contains("sky")){clearInterval(ticker);return} setProg((performance.now()-start)/total)},400);
+  timers.push(ticker);
+  stage.onpointerdown=()=>{
+    if(active){const a=active;active=null;hits++;rts.push(performance.now()-t0);a.getAnimations?.().forEach(x=>x.cancel());a.remove();tone(980,.12);later(()=>tone(1320,.15),80);cnt.textContent=`Gesehen: ${hits}`;hint.textContent="Erwischt!"}
+    else{fa++;soft();hint.textContent="Da war noch keine. Weiter Wache halten."}
+  };
+  function launch(){
+    const W=stage.clientWidth, H=stage.clientHeight;
+    const x0=Math.random()*W*.5-60, y0=40+Math.random()*H*.35, x1=x0+W*.55, y1=y0+H*.32;
+    const ang=Math.atan2(y1-y0,x1-x0)*180/Math.PI;
+    const el=document.createElement("div"); el.className="shoot"; stage.appendChild(el);
+    active=el; t0=performance.now();
+    const fx=[{transform:`translate(${x0}px,${y0}px) rotate(${ang}deg)`,opacity:0},{opacity:1,offset:.15},{transform:`translate(${x1}px,${y1}px) rotate(${ang}deg)`,opacity:.9}];
+    try{el.animate(fx,{duration:FLY,easing:"linear",fill:"forwards"})}catch(e){el.style.transform=`translate(${x0}px,${y0}px) rotate(${ang}deg)`}
+    later(()=>{ if(active===el){active=null;hint.textContent="Die ist entwischt."} el.remove(); done++;
+      if(done>=EVENTS){const hit=Math.round(hits/EVENTS*100);const s=hit>=90&&fa<=2?3:hit>=70?2:1;
+        finish("sterne",s,`${hits} von ${EVENTS} Sternschnuppen gesehen · ${fa} ${fa===1?"Fehlalarm":"Fehlalarme"}`,praise(s),{hit,hits,n:EVENTS,fa,rt:median(rts)})}
+    },FLY);
+  }
+  let acc=0; gaps.forEach(g=>{acc+=g;later(launch,acc)});
+}
+
+/* ---------- 7: Leuchtatem ---------- */
+function atmen(){
+  const CYCLES=5, IN=4000, HOLD=2000, OUT=6000; let c=0;
+  stage.innerHTML=`<div class="breath" id="orb"></div><div class="breath-word" id="bw"></div>`;
+  const orb=$("orb"), bw=$("bw");
+  function cycle(){
+    setProg(c/CYCLES);
+    if(c>=CYCLES) return finish("atmen",3,"Fünf ruhige Atemzüge","Schön ruhig geworden.",{cycles:CYCLES});
+    hint.textContent=`Atemzug ${c+1} von ${CYCLES}`;
+    orb.style.transitionDuration=IN+"ms"; orb.style.transform="scale(1)"; bw.textContent="Einatmen"; tone(392,.4,"sine",.05);
+    later(()=>{bw.textContent="Halten"},IN);
+    later(()=>{orb.style.transitionDuration=OUT+"ms";orb.style.transform="scale(.45)";bw.textContent="Ausatmen";tone(330,.5,"sine",.05)},IN+HOLD);
+    later(()=>{c++;cycle()},IN+HOLD+OUT);
+  }
+  later(cycle,400);
+}
+
+const demo=(...figs)=>`<div class="demo">${figs.map(([svg,label,cls,w])=>`<figure><div style="width:${w||80}px">${svg}</div><span class="${cls}">${label}</span></figure>`).join("")}</div>`;
+const small=s=>s.replace('class="sprite"','width="90" height="90"');
+const GAMES={
+  ampel:()=>intro("Glühwürmchen fangen","Tippe schnell, wenn ein Glühwürmchen kommt. Kommt die schlafende Eule, tippst du nicht. Sonst wacht sie auf.",
+    demo([small(FIREFLY),"Tippen","ok",90],[small(OWL(false)),"Warten","no",90]),ampel),
+  tagnacht:()=>intro("Tag und Nacht","Zuerst tippst du das Bild, das du siehst. Dann kommt der Gegenteil-Tag: Bei der Sonne tippst du den Mond, beim Mond die Sonne.",
+    demo([SUN(),"Erst: Sonne","ok",70],[MOON(),"Dann: Gegenteil","no",70]),tagnacht),
+  kette:()=>intro("Laternen-Kette","Die Gläser leuchten nacheinander auf. Schau genau hin und tippe sie danach in derselben Reihenfolge an.","",kette),
+  igel:()=>intro("Igel-Parade","Fünf Igel laufen vorbei. Nur der Igel in der Mitte auf dem grünen Blatt zählt. Tippe die Richtung, in die er läuft.",
+    `<div class="parade" style="max-width:300px">${hedgehog(false)}${hedgehog(false)}<span class="mid">${hedgehog(true)}</span>${hedgehog(false)}${hedgehog(false)}</div><p class="ok" style="font-weight:800">Hier: rechts</p>`,igel),
+  pilze:()=>intro("Pilzsuche","Finde alle roten Pilze mit weißen Punkten. Rote Pilze ohne Punkte und braune Pilze lässt du stehen.",
+    demo([mushroom(RED,true),"Suchen","ok",70],[mushroom(RED,false),"Nicht","no",70],[mushroom(BROWN,true),"Nicht","no",70]),pilze),
+  sterne:()=>intro("Sternschnuppen-Wache","Schau eine Minute lang in den Nachthimmel. Immer wenn eine Sternschnuppe fliegt, tippst du schnell. Sonst wartest du.","",sterne),
+  atmen:()=>intro("Leuchtatem","Wenn das Licht groß wird, atmest du durch die Nase ein. Wenn es klein wird, atmest du langsam durch den Mund aus.","",atmen)
+};
+
+/* ---------- Verlauf ---------- */
+const fmtDate=t=>{const d=new Date(t);return `${pad(d.getDate())}.${pad(d.getMonth()+1)}. ${pad(d.getHours())}:${pad(d.getMinutes())}`};
+function spark(vals){
+  const W=220,H=56,P=6;
+  if(vals.length<2) return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><circle cx="${W/2}" cy="${H/2}" r="4" fill="#ffd45c"/></svg>`;
+  let lo=Math.min(...vals), hi=Math.max(...vals); if(hi===lo){hi+=1;lo-=1}
+  const x=i=>P+i*(W-2*P)/(vals.length-1), y=v=>H-P-(v-lo)/(hi-lo)*(H-2*P);
+  const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+    <line x1="${P}" x2="${W-P}" y1="${H/2}" y2="${H/2}" stroke="#21494e" stroke-width="1"/>
+    <polygon points="${x(0)},${H-P} ${pts} ${x(vals.length-1)},${H-P}" fill="rgba(134,207,162,.15)"/>
+    <polyline points="${pts}" fill="none" stroke="#86cfa2" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+    <circle cx="${x(vals.length-1)}" cy="${y(vals[vals.length-1])}" r="4" fill="#ffd45c"/></svg>`;
+}
+function valueText(h){
+  const m=META[h.g]; if(!m||!m.metric||h.m[m.metric]==null) return "";
+  return `${h.m[m.metric]}${m.unit?" "+m.unit:""} ${m.label}`;
+}
+function renderHistory(){
+  const H=store.history, body=$("histBody");
+  if(!H.length){body.innerHTML=`<div class="section"><p class="empty">Noch keine Spiele gespeichert. Nach jedem Spiel erscheinen die Werte hier.</p></div>`;return}
+  // 14 Tage
+  const days=[]; for(let k=13;k>=0;k--){const d=new Date();d.setDate(d.getDate()-k);days.push(d)}
+  const dayHtml=days.map(d=>{const n=playsOn(dayKey(d));return `<div class="day" title="${n} Spiele"><i class="${n>=3?"l3":n===2?"l2":n===1?"l1":""}"></i>${d.getDate()}.</div>`}).join("");
+  const active=days.filter(d=>playsOn(dayKey(d))>0).length;
+  // pro Spiel
+  const cards=ORDER.filter(g=>META[g].metric&&H.some(h=>h.g===g)).map(g=>{
+    const m=META[g], list=H.filter(h=>h.g===g&&h.m[m.metric]!=null), last=list[list.length-1];
+    const vals=list.slice(-15).map(h=>h.m[m.metric]);
+    const best=m.better>0?Math.max(...list.map(h=>h.m[m.metric])):Math.min(...list.map(h=>h.m[m.metric]));
+    const rt=last.m.rt?` · Reaktion ${last.m.rt} ms`:"";
+    return `<div class="mcard"><span class="name">${m.name}</span>
+      <span class="val">${last.m[m.metric]}${m.unit}<small>${m.label}${m.better<0?" (weniger ist besser)":""}</small></span>
+      ${spark(vals)}<span class="meta">${list.length}× gespielt · Bestwert ${best}${m.unit}${rt}</span></div>`}).join("");
+  const breath=H.filter(h=>h.g==="atmen").length;
+  const rows=[...H].reverse().slice(0,40).map(h=>`<tr><td class="when">${fmtDate(h.t)}</td><td>${META[h.g]?.name||h.g}</td><td class="st">${starStr(h.s)}</td><td>${h.info}</td></tr>`).join("");
+  body.innerHTML=`
+    <div class="section"><h3>Letzte 14 Tage · an ${active} Tagen gespielt</h3><div class="days">${dayHtml}</div></div>
+    <div class="section"><h3>Entwicklung je Spiel</h3><div class="mcards">${cards||'<p class="empty">Noch keine Messwerte.</p>'}</div>
+      ${breath?`<p class="note">Leuchtatem: ${breath}× geatmet.</p>`:""}</div>
+    <div class="section"><h3>Einzelne Spiele</h3><div class="tablewrap"><table><thead><tr><th>Wann</th><th>Spiel</th><th>Sterne</th><th>Ergebnis</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+    <div class="section"><h3>Weitergeben oder löschen</h3>
+      <div class="row" style="justify-content:flex-start" id="histActions">
+        <button class="btn small" id="copyBtn" type="button">Als Text kopieren</button>
+        <button class="btn small ghost" id="delBtn" type="button">Verlauf löschen</button>
+      </div>
+      <p class="note" id="copyNote">Der Text lässt sich in eine Nachricht oder Notiz einfügen, zum Beispiel für ein Gespräch in der Kinderarztpraxis.</p>
+      <div id="copyArea"></div></div>`;
+  $("copyBtn").onclick=()=>{
+    const txt="Leuchtwald – Verlauf\n"+H.map(h=>`${fmtDate(h.t)} | ${META[h.g]?.name||h.g} | ${h.s}/3 Sterne | ${h.info}${h.m.rt?` | Reaktion ${h.m.rt} ms`:""}`).join("\n");
+    const fallback=()=>{$("copyArea").innerHTML=`<textarea class="copy" id="copyTxt" readonly></textarea>`;const ta=$("copyTxt");ta.value=txt;ta.focus();ta.select();$("copyNote").textContent="Kopieren war hier nicht möglich. Der Text ist markiert, du kannst ihn selbst kopieren."};
+    try{navigator.clipboard.writeText(txt).then(()=>{$("copyNote").textContent=`Kopiert: ${H.length} Einträge in der Zwischenablage.`},fallback)}catch(e){fallback()}
+  };
+  $("delBtn").onclick=()=>{
+    $("histActions").innerHTML=`<span style="align-self:center">Wirklich alle ${H.length} Einträge löschen?</span><button class="btn small danger" id="delYes" type="button">Ja, löschen</button><button class="btn small ghost" id="delNo" type="button">Abbrechen</button>`;
+    $("delNo").onclick=renderHistory;
+    $("delYes").onclick=()=>{store.history=[];store.stars={};save();renderHistory()};
+  };
+}
+
+renderSound(); renderHome();
+})();
+</script>
+
+</body>
+</html>
