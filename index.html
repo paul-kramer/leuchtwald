@@ -169,6 +169,73 @@ td.when{white-space:nowrap;color:var(--soft)}
 .note{color:var(--soft);font-size:.9rem;max-width:62ch;margin-top:10px}
 textarea.copy{width:100%;min-height:140px;margin-top:10px;background:var(--night-2);color:var(--mist);border:1px solid var(--night-3);border-radius:12px;padding:10px;font:14px/1.4 ui-monospace,monospace;box-sizing:border-box}
 
+
+/* Lernpfade */
+.sec{font:600 1.2rem var(--display);color:var(--soft);margin-top:28px}
+.sec+.grid{margin-top:12px}
+.intro.wide{max-width:540px}
+.typen{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tchip{all:unset;cursor:pointer;padding:9px 14px;border-radius:999px;border:2px solid var(--night-3);color:var(--soft);font:600 .95rem var(--body)}
+.tchip.on{background:var(--moss);border-color:var(--moss);color:var(--night)}
+.tchip:focus-visible,.feld:focus-visible,.pad button:focus-visible,.wbtn:focus-visible,.rbtn:focus-visible{outline:3px solid var(--glow);outline-offset:3px}
+.stage.math{place-items:start center;overflow-y:auto}
+.task{width:100%;max-width:580px;display:grid;gap:14px;justify-items:center;padding:20px 14px 22px;text-align:center}
+.tq{font:600 1.3rem var(--display);text-wrap:balance}
+.tq b{color:var(--glow)}
+.tbild{width:100%;display:grid;place-items:center}
+.tvorlage{font:600 1.6rem var(--display);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;font-variant-numeric:tabular-nums;max-width:100%}
+.feld{all:unset;box-sizing:border-box;min-width:84px;height:56px;padding:0 10px;border-radius:14px;background:var(--night);border:3px solid var(--night-3);
+  font:600 1.6rem var(--display);color:var(--glow);text-align:center;display:inline-grid;place-items:center;cursor:pointer;font-variant-numeric:tabular-nums}
+.feld.aktiv{border-color:var(--glow);box-shadow:0 0 14px rgba(255,212,92,.35)}
+.feld.richtig{border-color:var(--moss);color:var(--moss)}
+.feld.falsch{border-color:var(--coral);color:var(--coral)}
+.feld.loesung{border-color:var(--soft);color:var(--mist)}
+.tfb{min-height:1.5em;font-weight:700;color:var(--soft);max-width:44ch}
+.tfb.ok{color:var(--moss);font:600 1.3rem var(--display)} .tfb.no{color:var(--coral)}
+.pad{display:grid;grid-template-columns:repeat(3,68px);gap:10px}
+.pad button{all:unset;box-sizing:border-box;height:56px;border-radius:14px;background:var(--night-3);color:var(--mist);font:600 1.5rem var(--display);text-align:center;line-height:56px;cursor:pointer}
+.pad button:active{transform:scale(.95)}
+.pad .pruef{grid-column:span 3;background:var(--glow);color:var(--night)}
+.wahl{display:grid;gap:10px;width:min(100%,460px)}
+.wbtn{all:unset;box-sizing:border-box;cursor:pointer;background:var(--night-3);border:3px solid transparent;border-radius:16px;padding:14px;font:600 1.1rem var(--body);overflow-wrap:anywhere;color:var(--mist)}
+.wbtn.good{background:rgba(134,207,162,.35);border-color:var(--moss)} .wbtn.bad{background:rgba(255,143,112,.25);border-color:var(--coral);opacity:.7}
+.rziel,.reihe{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;min-height:60px}
+.rziel{background:var(--night);border-radius:16px;padding:10px;width:100%}
+.slot{width:70px;height:50px;border-radius:12px;border:2px dashed var(--night-3)}
+.lt{color:var(--soft);font:600 1.3rem var(--display)}
+.rbtn{all:unset;box-sizing:border-box;cursor:pointer;min-width:70px;height:50px;padding:0 10px;border-radius:12px;background:var(--night-3);font:600 1.4rem var(--display);text-align:center;line-height:50px;color:var(--mist);font-variant-numeric:tabular-nums}
+.rbtn.gesetzt{background:rgba(255,212,92,.2)} .rbtn.richtig{background:rgba(134,207,162,.35)} .rbtn.falsch{background:rgba(255,143,112,.35)}
+/* Aufgabenbilder */
+.mab{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;align-items:flex-end;padding:6px}
+.mab .g{display:flex;flex-wrap:wrap;gap:5px;align-items:flex-end}
+.mab .g.h{max-width:270px;justify-content:center}
+.mab .g.e{display:grid;grid-template-columns:repeat(5,12px);gap:4px}
+.mh{width:48px;height:48px} .mz{width:11px;height:48px} .me{width:12px;height:12px}
+.swt{display:grid;grid-template-columns:repeat(3,96px);border:2px solid var(--night-3);border-radius:14px;overflow:hidden}
+.swt .sk{background:#f3d9a4;color:var(--night);font:600 1.2rem var(--display);padding:4px 0}
+.swt .sz{min-height:100px;display:grid;place-items:center;background:var(--night);border-right:2px solid var(--night-3)}
+.swt .sz:last-child{border-right:0}
+.swt .sz.hl{box-shadow:inset 0 0 0 3px var(--glow)}
+.dots{display:grid;grid-template-columns:repeat(3,16px);gap:6px}
+.dots i{width:16px;height:16px;border-radius:50%;background:#7cc4f0}
+.dots i.neu{background:transparent;border:2px dashed var(--glow);animation:blink 1s infinite alternate}
+.dots i.weg{opacity:.35;box-shadow:0 0 0 2px var(--coral)}
+@keyframes blink{to{opacity:.35}}
+.kz{font:600 2.2rem var(--display);letter-spacing:.04em;word-spacing:.35em}
+.wort{font:600 clamp(1.25rem,4.6vw,1.8rem) var(--display);overflow-wrap:anywhere;max-width:100%}
+.wort span{color:var(--mist)}
+.karten{position:relative;width:120px;height:84px;margin:2px auto}
+.kc{position:absolute;right:0;display:flex;border-radius:8px;padding:6px 0;font:600 2rem var(--display);color:var(--night);box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.kc i{font-style:normal;width:40px;text-align:center}
+.kc.kh{background:#ffd27a} .kc.kz{background:#8fcaf2} .kc.ke{background:#ffa38a}
+.strahl{width:100%;max-width:600px;height:auto}
+.vn{display:grid;grid-template-columns:repeat(3,auto);gap:6px 12px;align-items:center;justify-items:center}
+.vn small{font:700 .8rem var(--body);color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+.vn b,.kreuz b{color:var(--mist)}
+.kreuz{display:grid;grid-template-columns:repeat(3,auto);gap:8px;align-items:center;justify-items:center}
+.kreuz b{min-width:84px;height:56px;line-height:56px;border-radius:14px;background:var(--night-3)}
+.zl{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation:none!important}}
 </style>
 <style>*,*::before,*::after{box-sizing:border-box}body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -197,11 +264,15 @@ Diese Ansicht führt keine Skripte aus. Bitte die Datei in Safari öffnen, nicht
     <span id="todayText"></span>
   </div>
 
+  <h2 class="sec">Lernpfade</h2>
+  <div class="grid" id="pfade"></div>
+  <h2 class="sec">Spiele</h2>
   <div class="grid" id="cards"></div>
 
   <details class="parents">
     <summary>Für Eltern</summary>
     <ul>
+      <li><strong>Lernpfade:</strong> erst eine Minute atmen, dann immer drei Aufgaben, dazwischen ein Spiel. Was beim ersten Versuch nicht klappt, kommt im nächsten Block noch einmal. Im Verlauf steht, welche Aufgabentypen noch haken.</li>
       <li><strong>Kurz halten:</strong> zwei bis drei Spiele am Tag reichen. Danach ist Schluss, auch wenn es gut läuft.</li>
       <li><strong>Lieber wiederholen als wechseln:</strong> zwei bis drei feste Lieblingsspiele über Wochen bringen mehr als jeden Tag etwas Neues.</li>
       <li><strong>Dabeibleiben:</strong> gemeinsam spielen und loben, was das Kind gut gesteuert hat („Du hast gewartet!“), nicht nur die Sterne.</li>
@@ -235,6 +306,8 @@ Diese Ansicht führt keine Skripte aus. Bitte die Datei in Safari öffnen, nicht
   </div>
 </section>
 
+<script src="aufgaben/zahlen-bis-1000.js"></script>
+<script src="aufgaben/einmaleins.js"></script>
 <script>
 (function(){
 "use strict";
@@ -302,7 +375,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}}
 const pad=n=>String(n).padStart(2,"0");
 const dayKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const todayKey=()=>dayKey(new Date());
-const playsOn=k=>store.history.filter(h=>dayKey(new Date(h.t))===k).length;
+const playsOn=k=>store.history.filter(h=>!h.p&&dayKey(new Date(h.t))===k).length;
 const median=a=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return Math.round(s.length%2?s[m]:(s[m-1]+s[m])/2)};
 
 /* ---------- Ton & Sprache ---------- */
@@ -328,7 +401,7 @@ function later(fn,ms){const t=setTimeout(fn,ms);timers.push(t);return t}
 function clearTimers(){timers.forEach(clearTimeout);timers=[]}
 function setProg(p){prog.style.width=Math.round(Math.min(1,p)*100)+"%"}
 function show(el){[home,play,hist].forEach(s=>s.hidden=s!==el);window.scrollTo(0,0)}
-function goHome(){clearTimers();hush();stage.onpointerdown=null;stage.className="stage";show(home);renderHome()}
+function goHome(){clearTimers();hush();pfad=null;tasteFn=null;stage.onpointerdown=null;stage.className="stage";show(home);renderHome()}
 $("backBtn").onclick=goHome;
 $("histBack").onclick=goHome;
 $("histBtn").onclick=()=>{renderHistory();show(hist)};
@@ -358,13 +431,15 @@ function intro(title,text,demo,go){
 function finish(game,stars,lines,msg,metrics){
   clearTimers(); setProg(1); stage.onpointerdown=null; stage.className="stage";
   store.stars[game]=Math.max(store.stars[game]||0,stars);
-  store.history.push({t:Date.now(),g:game,s:stars,m:metrics||{},info:lines});
+  const imPfad=!!pfad;
+  store.history.push(Object.assign({t:Date.now(),g:game,s:stars,m:metrics||{},info:lines},imPfad?{p:1}:{}));
   if(store.history.length>800) store.history=store.history.slice(-800);
   save();
   stage.innerHTML=`<div class="result"><div class="bigstars" aria-label="${stars} von 3 Sternen">${"★".repeat(stars)}<span class="dim">${"★".repeat(3-stars)}</span></div>
-    <h2>${msg}</h2><p class="stats">${lines}</p><div class="row"><button class="btn" id="again" type="button">Nochmal</button><button class="btn ghost" id="toHome" type="button">Zur Lichtung</button></div></div>`;
+    <h2>${msg}</h2><p class="stats">${lines}</p><div class="row">${imPfad?'<button class="btn" id="pw" type="button">Weiter im Pfad</button>':'<button class="btn" id="again" type="button">Nochmal</button><button class="btn ghost" id="toHome" type="button">Zur Lichtung</button>'}</div></div>`;
   hint.textContent=""; introText=msg;
   if(stars===3) chime();
+  if(imPfad){$("pw").onclick=pfadWeiter;return}
   $("again").onclick=()=>start(game); $("toHome").onclick=goHome;
 }
 const praise=s=>s===3?"Das war richtig stark!":s===2?"Gut gemacht!":"Du bist drangeblieben!";
@@ -578,6 +653,206 @@ const GAMES={
   atmen:()=>intro("Leuchtatem","Wenn das Licht groß wird, atmest du durch die Nase ein. Wenn es klein wird, atmest du langsam durch den Mund aus.","",atmen)
 };
 
+
+/* ---------- Lernpfade: Atmen → Aufgaben → Spiel → Aufgaben … ----------
+   Themen und Aufgabentypen liegen in aufgaben/*.js (siehe aufgaben/README.md). */
+const THEMEN=Array.isArray(window.LW_THEMEN)?window.LW_THEMEN:[];
+const SPIELFOLGE=["kette","pilze","igel","tagnacht","ampel","sterne"];
+const BLOECKE=3, PRO_BLOCK=3;
+const LOB=["Richtig!","Super!","Genau!","Stark!","Prima gemacht!"];
+const pk=id=>"pfad-"+id;
+const pickOne=a=>a[Math.floor(Math.random()*a.length)];
+const ohneTags=s=>String(s).replace(/<[^>]*>/g," ").replace(/&lt;/g,"<").replace(/\s+/g," ").trim();
+const sterneHtml=s=>`<div class="bigstars" aria-label="${s} von 3 Sternen">${"★".repeat(s)}<span class="dim">${"★".repeat(3-s)}</span></div>`;
+let pfad=null, tasteFn=null;
+document.addEventListener("keydown",e=>{if(tasteFn&&!play.hidden)tasteFn(e)});
+THEMEN.forEach(t=>{META[pk(t.id)]={name:t.name,metric:"acc",label:"beim 1. Versuch",unit:"%",better:1}});
+
+function renderPfade(){
+  const box=$("pfade");
+  if(!THEMEN.length){box.hidden=true;box.previousElementSibling.hidden=true;return}
+  box.innerHTML=THEMEN.map(t=>`<button class="card wide" data-pfad="${t.id}" type="button">
+    <svg class="icon" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#21494e"/>${t.icon||""}</svg>
+    <div><h3>${t.name}</h3><p>${t.beschreibung||""}</p><span class="skill">${t.klasse?t.klasse+" · ":""}Atmen, Aufgaben, Spiele</span><div class="stars" data-stars="${pk(t.id)}"></div></div></button>`).join("");
+  box.querySelectorAll("[data-pfad]").forEach(b=>b.onclick=()=>pfadSetup(b.dataset.pfad));
+}
+
+function pfadSetup(id){
+  const th=THEMEN.find(t=>t.id===id); if(!th) return;
+  tone(1,.01); clearTimers(); stage.onpointerdown=null; stage.className="stage"; show(play); setProg(0); hint.textContent="";
+  store.pfadTypen=store.pfadTypen||{};
+  const alle=th.typen.map(t=>t.id);
+  let sel=new Set((store.pfadTypen[id]||alle).filter(x=>alle.includes(x))); if(!sel.size) sel=new Set(alle);
+  introText=`${th.name}. Erst atmen wir ruhig. Dann kommen immer ${PRO_BLOCK} Aufgaben und dazwischen ein Spiel.`;
+  stage.innerHTML=`<div class="intro wide"><h2>${th.name}</h2>
+    <p>Erst ruhig atmen. Dann immer ${PRO_BLOCK} Aufgaben, dazwischen ein Leuchtwald-Spiel. Insgesamt ${BLOECKE*PRO_BLOCK} Aufgaben.</p>
+    <div class="typen">${th.typen.map(t=>`<button class="tchip${sel.has(t.id)?" on":""}" data-t="${t.id}" type="button" aria-pressed="${sel.has(t.id)}">${t.name}</button>`).join("")}</div>
+    <p class="note" style="margin:0">Heute üben: antippen zum An- oder Abwählen.</p>
+    <button class="btn" id="goBtn" type="button">Los geht's</button></div>`;
+  stage.querySelectorAll(".tchip").forEach(b=>b.onclick=()=>{
+    const t=b.dataset.t; if(sel.has(t)){if(sel.size===1)return;sel.delete(t)}else sel.add(t);
+    b.classList.toggle("on",sel.has(t)); b.setAttribute("aria-pressed",sel.has(t));
+  });
+  $("goBtn").onclick=()=>{hush();store.pfadTypen[id]=[...sel];save();pfadStart(th,[...sel])};
+}
+
+function pfadStart(th,typen){
+  let si=store.spielIdx||0; const spiele=[];
+  for(let b=0;b<BLOECKE-1;b++) spiele.push(SPIELFOLGE[si++%SPIELFOLGE.length]);
+  store.spielIdx=si%SPIELFOLGE.length; save();
+  const schritte=[{a:"spiel",g:"atmen"}];
+  for(let b=0;b<BLOECKE;b++){schritte.push({a:"block",b}); if(b<BLOECKE-1) schritte.push({a:"spiel",g:spiele[b]})}
+  pfad={th,typen,schritte,i:-1,log:[],nochmal:[],topf:[]};
+  pfadWeiter();
+}
+function pfadWeiter(){
+  if(!pfad) return goHome();
+  pfad.i++; const s=pfad.schritte[pfad.i];
+  if(!s) return pfadEnde();
+  if(s.a==="spiel") start(s.g); else block(s.b);
+}
+function naechsterTyp(){
+  if(pfad.nochmal.length) return pfad.nochmal.shift();
+  if(!pfad.topf.length) pfad.topf=shuffle([...pfad.typen]);
+  return pfad.topf.shift();
+}
+function block(b){
+  clearTimers(); tasteFn=null; stage.onpointerdown=null; show(play);
+  const stufe=Math.min(3,b+1); let k=0, erst=0;
+  function next(){
+    setProg(k/PRO_BLOCK);
+    if(k>=PRO_BLOCK) return blockEnde(b,erst);
+    const id=naechsterTyp(), typ=pfad.th.typen.find(t=>t.id===id);
+    let a; try{a=typ.erzeuge(stufe)}catch(e){console.error(e);k++;return next()}
+    hint.textContent=`Block ${b+1} von ${BLOECKE} · Aufgabe ${k+1} von ${PRO_BLOCK}`;
+    aufgabe(a,(geloest,erster)=>{
+      tasteFn=null; pfad.log.push({typ:id,geloest,erster});
+      if(erster) erst++; else if(!pfad.nochmal.includes(id)) pfad.nochmal.push(id);
+      k++; next();
+    });
+  }
+  next();
+}
+function blockEnde(b,erst){
+  setProg(1); const s=erst>=PRO_BLOCK?3:erst>=PRO_BLOCK-1?2:1; if(s===3) chime();
+  const nx=pfad.schritte[pfad.i+1];
+  const was=nx&&nx.a==="spiel"?`Jetzt kommt ein Spiel: <strong>${META[nx.g].name}</strong>.`:"Gleich siehst du dein Ergebnis.";
+  stage.className="stage";
+  stage.innerHTML=`<div class="result">${sterneHtml(s)}<h2>Block ${b+1} geschafft!</h2><p class="stats">${erst} von ${PRO_BLOCK} beim ersten Versuch richtig. ${was}</p><button class="btn" id="pw" type="button">Weiter</button></div>`;
+  hint.textContent=""; introText=`Block ${b+1} geschafft! ${ohneTags(was)}`;
+  $("pw").onclick=pfadWeiter;
+}
+function pfadEnde(){
+  const th=pfad.th, L=pfad.log, n=L.length, erst=L.filter(x=>x.erster).length, geloest=L.filter(x=>x.geloest).length;
+  const acc=n?Math.round(erst/n*100):0, s=acc>=85?3:acc>=60?2:1, g=pk(th.id);
+  const typName=id=>(th.typen.find(t=>t.id===id)||{}).name||id;
+  store.typStats=store.typStats||{};
+  L.forEach(x=>{const key=th.id+"/"+x.typ, t=store.typStats[key]||(store.typStats[key]={n:0,ok:0}); t.n++; if(x.erster) t.ok++;});
+  const schwer=[...new Set(L.filter(x=>!x.erster).map(x=>typName(x.typ)))];
+  const info=`${erst} von ${n} beim ersten Versuch, ${geloest} von ${n} gelöst`+(schwer.length?` · noch üben: ${schwer.join(", ")}`:"");
+  store.stars[g]=Math.max(store.stars[g]||0,s);
+  store.history.push({t:Date.now(),g,s,m:{acc,ok:erst,n},info});
+  if(store.history.length>800) store.history=store.history.slice(-800);
+  save(); pfad=null; tasteFn=null;
+  stage.className="stage"; setProg(1); hint.textContent="";
+  stage.innerHTML=`<div class="result">${sterneHtml(s)}<h2>${praise(s)}</h2>
+    <p class="stats">${erst} von ${n} Aufgaben beim ersten Versuch richtig, ${geloest} insgesamt gelöst.${schwer.length?`<br>Nächstes Mal üben wir noch einmal: ${schwer.join(", ")}.`:""}</p>
+    <div class="row"><button class="btn" id="toHome" type="button">Zur Lichtung</button></div></div>`;
+  introText=praise(s); if(s===3) chime();
+  $("toHome").onclick=goHome;
+}
+
+/* Eine Aufgabe anzeigen. done(geloest, ersterVersuch) */
+function aufgabe(a,done){
+  let versuche=0, fertig=false;
+  const art=a.art||"eingabe";
+  introText=a.vorlesen||ohneTags(a.frage);
+  stage.className="stage math"; stage.scrollTop=0;
+  stage.innerHTML=`<div class="task"><p class="tq">${a.frage}</p>${a.bild?`<div class="tbild">${a.bild}</div>`:""}<div class="tz" id="tz"></div><p class="tfb" id="tfb" aria-live="polite"></p><div class="tact" id="tact"></div></div>`;
+  const tz=$("tz"), tfb=$("tfb"), tact=$("tact");
+  const gut=()=>{fertig=true;tasteFn=null;chime();tfb.className="tfb ok";tfb.textContent=pickOne(LOB);tact.innerHTML="";later(()=>done(true,versuche===0),1100)};
+  const zeigeLoesung=()=>{fertig=true;tasteFn=null;tfb.className="tfb";tfb.innerHTML=`So geht es: ${a.erklaerung||""}`;
+    tact.innerHTML=`<button class="btn" id="tw" type="button">Weiter</button>`;$("tw").onclick=()=>done(false,false);introText="So geht es: "+ohneTags(a.erklaerung||"")};
+  const falsch=()=>{versuche++;soft();if(versuche>=2)return true;tfb.className="tfb no";tfb.textContent=a.tipp||"Schau noch einmal genau hin.";return false};
+
+  if(art==="wahl"){
+    tz.innerHTML=`<div class="wahl">${a.optionen.map((o,i)=>`<button class="wbtn" type="button" data-i="${i}">${o}</button>`).join("")}</div>`;
+    const bs=[...tz.querySelectorAll(".wbtn")];
+    bs.forEach(b=>b.onclick=()=>{
+      if(fertig||b.disabled) return; const i=+b.dataset.i;
+      if(i===a.loesung){b.classList.add("good");return gut()}
+      b.classList.add("bad"); b.disabled=true;
+      if(falsch()){bs[a.loesung].classList.add("good");zeigeLoesung()}
+    });
+    tasteFn=e=>{const i=+e.key-1;if(i>=0&&i<bs.length){e.preventDefault();bs[i].click()}};
+    return;
+  }
+
+  if(art==="reihe"){
+    tz.innerHTML=`<div class="rziel" id="rz"></div><div class="reihe" id="rq"></div>`;
+    const rz=$("rz"), rq=$("rq"); let gew=[];
+    const zeichne=mk=>{
+      rz.innerHTML=a.items.map((_,k)=>{const v=gew[k];if(v==null)return `<span class="slot"></span>`;
+        const m=mk?(mk[k]?" richtig":" falsch"):"";return `<button class="rbtn gesetzt${m}" type="button" data-k="${k}">${v}</button>`}).join(`<span class="lt">&lt;</span>`);
+      rq.innerHTML=a.items.filter(v=>!gew.includes(v)).map(v=>`<button class="rbtn" type="button" data-v="${v}">${v}</button>`).join("");
+      rq.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{if(fertig)return;gew.push(+b.dataset.v);tone(500+gew.length*80,.08);zeichne();if(gew.length===a.items.length)pruefen()});
+      rz.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{if(fertig)return;gew.splice(+b.dataset.k);zeichne()});
+    };
+    const pruefen=()=>{
+      const ok=gew.map((v,k)=>v===a.loesung[k]);
+      zeichne(ok);
+      if(ok.every(Boolean)) return gut();
+      if(falsch()){gew=[...a.loesung];fertig=true;zeichne(a.loesung.map(()=>true));return zeigeLoesung()}
+      fertig=true;
+      later(()=>{fertig=false;const p=ok.indexOf(false);gew=gew.slice(0,p);zeichne()},1500);
+    };
+    zeichne(); return;
+  }
+
+  // Eingabe mit Ziffernblock
+  const vl=(a.vorlage||"{0}").replace(/\{(\d+)\}/g,(m,i)=>`<button class="feld" type="button" data-f="${i}" aria-label="Eingabefeld ${+i+1}"></button>`);
+  tz.innerHTML=`<div class="tvorlage">${vl}</div>`;
+  const felder=[...tz.querySelectorAll(".feld")].sort((x,y)=>x.dataset.f-y.dataset.f);
+  const wert=felder.map(()=>""); let akt=0;
+  const zeichne=()=>felder.forEach((el,i)=>{el.textContent=wert[i];el.classList.toggle("aktiv",i===akt&&!fertig)});
+  felder.forEach((el,i)=>el.onclick=()=>{if(fertig)return;akt=i;zeichne()});
+  const mehr=felder.length>1;
+  tact.innerHTML=`<div class="pad">${[1,2,3,4,5,6,7,8,9].map(d=>`<button type="button" data-d="${d}">${d}</button>`).join("")}
+    <button type="button" data-d="x" aria-label="Löschen">⌫</button><button type="button" data-d="0">0</button>
+    ${mehr?'<button type="button" data-d="n" aria-label="Nächstes Feld">→</button>':'<span></span>'}
+    <button type="button" class="pruef" data-d="ok">Prüfen</button></div>`;
+  const druecke=d=>{
+    if(fertig) return;
+    if(d==="ok") return pruefen();
+    if(d==="n"){akt=(akt+1)%felder.length;return zeichne()}
+    tone(600,.05,"sine",.05);
+    const el=felder[akt];
+    if(el.classList.contains("falsch")){el.classList.remove("falsch");wert[akt]=""}
+    if(d==="x") wert[akt]=wert[akt].slice(0,-1);
+    else if(wert[akt].length<4) wert[akt]=(wert[akt]+d).replace(/^0+(?=\d)/,"");
+    zeichne();
+  };
+  tact.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>druecke(b.dataset.d));
+  tasteFn=e=>{const k=e.key;let d=null;
+    if(/^[0-9]$/.test(k))d=k;else if(k==="Backspace")d="x";else if(k==="Enter")d="ok";else if(k==="Tab"||k==="ArrowRight")d="n";else return;
+    e.preventDefault(); if(d==="n"&&!mehr) return; druecke(d)};
+  function pruefen(){
+    const leer=wert.findIndex(v=>v==="");
+    if(leer>=0){akt=leer;zeichne();tfb.className="tfb";tfb.textContent=mehr?"Es fehlt noch eine Zahl.":"Tippe zuerst deine Zahl ein.";return}
+    const z=wert.map(Number), soll=a.loesung; let ok;
+    if(a.beliebig){const rest=[...soll];ok=z.map(v=>{const i=rest.indexOf(v);if(i<0)return false;rest.splice(i,1);return true})}
+    else ok=z.map((v,i)=>v===soll[i]);
+    felder.forEach((el,i)=>{el.classList.toggle("richtig",ok[i]);el.classList.toggle("falsch",!ok[i])});
+    if(ok.every(Boolean)){gut();return zeichne()}
+    if(falsch()){
+      felder.forEach((el,i)=>{wert[i]=String(soll[i]);el.classList.remove("falsch","richtig");el.classList.add("loesung")});
+      zeigeLoesung(); return zeichne();
+    }
+    akt=ok.indexOf(false); zeichne();
+  }
+  zeichne();
+}
+
 /* ---------- Verlauf ---------- */
 const fmtDate=t=>{const d=new Date(t);return `${pad(d.getDate())}.${pad(d.getMonth()+1)}. ${pad(d.getHours())}:${pad(d.getMinutes())}`};
 function spark(vals){
@@ -596,6 +871,14 @@ function valueText(h){
   const m=META[h.g]; if(!m||!m.metric||h.m[m.metric]==null) return "";
   return `${h.m[m.metric]}${m.unit?" "+m.unit:""} ${m.label}`;
 }
+function typTabelle(){
+  const ts=store.typStats||{};
+  const z=THEMEN.flatMap(t=>t.typen.filter(y=>ts[t.id+"/"+y.id]).map(y=>{const v=ts[t.id+"/"+y.id];return {th:t.name,name:y.name,n:v.n,q:Math.round(v.ok/v.n*100)}})).sort((a,b)=>a.q-b.q);
+  if(!z.length) return "";
+  return `<div class="section"><h3>Lernpfade: Aufgabentypen</h3><p class="note" style="margin:0 0 10px">Oben stehen die Typen, die am seltensten beim ersten Versuch klappen.</p>
+    <div class="tablewrap"><table><thead><tr><th>Thema</th><th>Aufgabe</th><th>Anzahl</th><th>1. Versuch</th></tr></thead><tbody>
+    ${z.map(r=>`<tr><td>${r.th}</td><td>${r.name}</td><td>${r.n}</td><td class="${r.q<60?"no":r.q>=85?"ok":""}">${r.q} %</td></tr>`).join("")}</tbody></table></div></div>`;
+}
 function renderHistory(){
   const H=store.history, body=$("histBody");
   if(!H.length){body.innerHTML=`<div class="section"><p class="empty">Noch keine Spiele gespeichert. Nach jedem Spiel erscheinen die Werte hier.</p></div>`;return}
@@ -604,7 +887,7 @@ function renderHistory(){
   const dayHtml=days.map(d=>{const n=playsOn(dayKey(d));return `<div class="day" title="${n} Spiele"><i class="${n>=3?"l3":n===2?"l2":n===1?"l1":""}"></i>${d.getDate()}.</div>`}).join("");
   const active=days.filter(d=>playsOn(dayKey(d))>0).length;
   // pro Spiel
-  const cards=ORDER.filter(g=>META[g].metric&&H.some(h=>h.g===g)).map(g=>{
+  const cards=[...ORDER,...THEMEN.map(t=>pk(t.id))].filter(g=>META[g].metric&&H.some(h=>h.g===g)).map(g=>{
     const m=META[g], list=H.filter(h=>h.g===g&&h.m[m.metric]!=null), last=list[list.length-1];
     const vals=list.slice(-15).map(h=>h.m[m.metric]);
     const best=m.better>0?Math.max(...list.map(h=>h.m[m.metric])):Math.min(...list.map(h=>h.m[m.metric]));
@@ -618,6 +901,7 @@ function renderHistory(){
     <div class="section"><h3>Letzte 14 Tage · an ${active} Tagen gespielt</h3><div class="days">${dayHtml}</div></div>
     <div class="section"><h3>Entwicklung je Spiel</h3><div class="mcards">${cards||'<p class="empty">Noch keine Messwerte.</p>'}</div>
       ${breath?`<p class="note">Leuchtatem: ${breath}× geatmet.</p>`:""}</div>
+    ${typTabelle()}
     <div class="section"><h3>Einzelne Spiele</h3><div class="tablewrap"><table><thead><tr><th>Wann</th><th>Spiel</th><th>Sterne</th><th>Ergebnis</th></tr></thead><tbody>${rows}</tbody></table></div></div>
     <div class="section"><h3>Weitergeben oder löschen</h3>
       <div class="row" style="justify-content:flex-start" id="histActions">
@@ -634,11 +918,11 @@ function renderHistory(){
   $("delBtn").onclick=()=>{
     $("histActions").innerHTML=`<span style="align-self:center">Wirklich alle ${H.length} Einträge löschen?</span><button class="btn small danger" id="delYes" type="button">Ja, löschen</button><button class="btn small ghost" id="delNo" type="button">Abbrechen</button>`;
     $("delNo").onclick=renderHistory;
-    $("delYes").onclick=()=>{store.history=[];store.stars={};save();renderHistory()};
+    $("delYes").onclick=()=>{store.history=[];store.stars={};store.typStats={};save();renderHistory()};
   };
 }
 
-renderSound(); renderHome();
+renderSound(); renderPfade(); renderHome();
 })();
 </script>
 
